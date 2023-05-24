@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+                               http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                               http://cxf.apache.org/blueprint/jaxrs
+                               http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
+                               http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0
+                               http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
+
+    <!-- Layout Editor Pentaho plugin properties -->
+    <cm:property-placeholder persistent-id="com.hitachivantara.dashboards.impl.pentaho" update-strategy="reload">
+
+        <cm:default-properties>
+            <cm:property name="plugin.webpackage.id" value="@hitachivantara/layout-editor@${project.version}"/>
+            <cm:property name="plugin.pentaho.webpackage.id"
+                         value="@hitachivantara/layout-editor-pentaho@${project.version}"/>
+            <cm:property name="plugin.id" value="layout-editor"/>
+
+            <cm:property name="plugin.extension" value="dsb"/>
+            <cm:property name="plugin.mimeType" value="application/vnd.layout.editor"/>
+            <cm:property name="plugin.iconUrl"
+                         value="osgi/@hitachivantara/layout-editor-pentaho@${project.version}/file_dsb_small.png"/>
+
+            <cm:property name="plugin.open.perspective" value="dsb.view"/>
+            <cm:property name="plugin.edit.perspective" value="dsb.edit"/>
+            <cm:property name="plugin.new.perspective" value="dsb.new"/>
+
+            <cm:property name="overlay.button.id" value="launch"/>
+            <cm:property name="overlay.menu.id" value="startup.layout"/>
+
+            <cm:property name="overlay.label" value="Layout"/>
+            <cm:property name="overlay.resourceBundleUri"
+                         value="osgi/@hitachivantara/layout-editor-pentaho@${project.version}/lang/messages"/>
+            <cm:property name="overlay.commandUri" value="api/repos/layout-editor/dsb.new"/>
+        </cm:default-properties>
+    </cm:property-placeholder>
+
+    <bean id="repositoryAccess" class="com.hitachivantara.dashboards.impl.pentaho.utils.RepositoryAccess"/>
+
+    <bean id="layoutStore" class="com.hitachivantara.dashboards.impl.pentaho.access.PentahoRepositoryDashboardStore">
+        <property name="repositoryAccess" ref="repositoryAccess"/>
+    </bean>
+
+    <bean id="layoutComponentStore" class="com.hitachivantara.dashboards.impl.component.access.DashboardComponentStore">
+        <property name="connectors">
+            <map>
+                <entry key="cde">
+                    <bean class="com.hitachivantara.dashboards.impl.pentaho.component.CdeComponentConnector">
+                        <property name="repositoryAccess" ref="repositoryAccess"/>
+                    </bean>
+                </entry>
+                <entry key="analyzer">
+                    <bean class="com.hitachivantara.dashboards.impl.pentaho.component.AnalyzerComponentConnector">
+                        <property name="repositoryAccess" ref="repositoryAccess"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <!-- layout editor rest endpoints -->
+
+    <bean id="layoutEndpoint" class="com.hitachivantara.dashboards.impl.pentaho.access.DashboardEndpoint">
+        <property name="dashboardStore" ref="layoutStore"/>
+    </bean>
+
+    <bean id="layoutComponentEndpoint"
+          class="com.hitachivantara.dashboards.impl.pentaho.access.DashboardComponentEndpoint">
+        <property name="dashboardComponentStore" ref="layoutComponentStore"/>
+    </bean>
+
+    <bean id="objectMapper" class="com.hitachivantara.dashboards.impl.pentaho.access.RestServiceJacksonModule"
+          factory-method="getMapper"/>
+    <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider">
+        <property name="mapper" ref="objectMapper"/>
+    </bean>
+
+    <jaxrs:server address="/layout-editor" id="layoutService">
+        <jaxrs:serviceBeans>
+            <ref component-id="layoutEndpoint"/>
+            <ref component-id="layoutComponentEndpoint"/>
+        </jaxrs:serviceBeans>
+
+        <jaxrs:extensionMappings>
+            <entry key="json" value="application/json"/>
+            <entry key="xml" value="application/xml"/>
+        </jaxrs:extensionMappings>
+
+        <jaxrs:providers>
+            <ref component-id="jsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:server>
+</blueprint>

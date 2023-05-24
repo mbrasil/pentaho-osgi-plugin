@@ -1,0 +1,10 @@
+<features name="${project.artifactId}-repo" xmlns="http://karaf.apache.org/xmlns/features/v1.6.0">
+  <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</repository>
+
+  <feature name="${project.artifactId}" version="${project.version}">
+    <feature dependency="true" version="${cxf.version}">cxf-jaxrs</feature>
+
+    <bundle>pentaho-webjars:mvn:org.webjars.npm/react/${react.version}</bundle>
+    <bundle>pentaho-webjars:mvn:org.webjars.npm/react-dom/${react.version}</bundle>
+  </feature>
+</features>

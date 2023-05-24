@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.hitachivantara.dashboards</groupId>
+        <artifactId>pentaho-osgi-plugin</artifactId>
+        <version>9.6.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>pentaho-osgi-plugin-impls</artifactId>
+
+    <packaging>pom</packaging>
+
+    <name>${project.artifactId}</name>
+    <description>Pentaho OSGi Plugin Implementations</description>
+
+    <modules>
+        <module>server</module>
+        <module>webclient</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- Pentaho Platform dependencies -->
+
+            <dependency>
+                <groupId>pentaho</groupId>
+                <artifactId>pentaho-platform-api</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>pentaho</groupId>
+                <artifactId>pentaho-platform-core</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>pentaho</groupId>
+                <artifactId>pentaho-platform-extensions</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.pentaho</groupId>
+                <artifactId>commons-xul-core</artifactId>
+                <version>${project.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons-logging.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${javax.servlet-api.version}</version>
+                <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>*</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Layout Editor Api and Core dependencies -->
+
+            <dependency>
+                <groupId>com.hitachivantara.dashboards</groupId>
+                <artifactId>layout-editor-api-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.hitachivantara.dashboards</groupId>
+                <artifactId>layout-editor-impl-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Test framework -->
+
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-common</artifactId>
+                <version>${jersey-common.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

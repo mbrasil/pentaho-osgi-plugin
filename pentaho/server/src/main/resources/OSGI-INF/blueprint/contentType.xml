@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+                               http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+    <!-- =================================== -->
+    <!--         Content Type                -->
+    <!-- =================================== -->
+
+    <service interface="org.pentaho.platform.api.engine.IContentInfo" activation="eager">
+        <service-properties>
+            <entry key="plugin-id" value="${plugin.id}"/>
+            <entry key="extension" value="${plugin.extension}"/>
+        </service-properties>
+
+        <bean class="com.hitachivantara.dashboards.impl.pentaho.content.LayoutContentInfo">
+            <property name="extension" value="${plugin.extension}"/>
+            <property name="mimeType" value="${plugin.mimeType}"/>
+            <property name="iconUrl" value="${plugin.iconUrl}"/>
+
+            <property name="operations">
+                <list value-type="org.pentaho.platform.api.engine.IPluginOperation">
+                    <bean class="org.pentaho.platform.engine.core.solution.PluginOperation">
+                        <argument value="RUN"/>
+                        <property name="perspective" value="${plugin.open.perspective}"/>
+                    </bean>
+                    <bean class="org.pentaho.platform.engine.core.solution.PluginOperation">
+                        <argument value="EDIT"/>
+                        <property name="perspective" value="${plugin.edit.perspective}"/>
+                    </bean>
+                </list>
+            </property>
+        </bean>
+    </service>
+
+    <!-- =================================== -->
+    <!--    Layout Editor IPlatformPlugin    -->
+    <!-- =================================== -->
+
+    <bean id="layoutClassLoader" class="com.hitachivantara.dashboards.impl.pentaho.LayoutClassLoaderInitializer"
+          init-method="init" destroy-method="destroy"/>
+
+    <service interface="org.pentaho.platform.api.engine.IPlatformPlugin" activation="eager">
+        <service-properties>
+            <entry key="plugin-id" value="${plugin.id}"/>
+        </service-properties>
+
+        <bean class="com.hitachivantara.dashboards.impl.pentaho.LayoutPlatformPlugin" depends-on="layoutClassLoader">
+            <property name="id" value="${plugin.id}"/>
+            <property name="externalResourcesMap">
+                <map key-type="java.lang.String" value-type="java.util.List">
+                    <entry key="layout-editor">
+                        <list value-type="java.lang.String">
+                            <value>osgi/${plugin.pentaho.webpackage.id}/filechooser/filechooser.nocache.js</value>
+                        </list>
+                    </entry>
+                </map>
+            </property>
+        </bean>
+    </service>
+</blueprint>
